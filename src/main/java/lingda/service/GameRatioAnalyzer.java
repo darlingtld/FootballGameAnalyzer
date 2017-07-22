@@ -1,10 +1,13 @@
 package lingda.service;
 
+import lingda.model.Bingo;
 import lingda.model.GameRatio;
+import lingda.model.LuckyRatio;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,12 +19,14 @@ import java.util.Map;
 public class GameRatioAnalyzer {
     private static final Logger logger = LoggerFactory.getLogger(GameRatioAnalyzer.class);
 
-    public void analyze(List<GameRatio> jufuRatioList, List<GameRatio> hgaGameRatioList) {
+    public List<Bingo> analyze(List<GameRatio> jufuRatioList, List<GameRatio> hgaGameRatioList) {
         logger.info("start to analyze the ratio result between jufu and hga");
         HashMap<String, GameRatio> hgaGameRatioMap = new HashMap<>();
         for (GameRatio gameRatio : hgaGameRatioList) {
             hgaGameRatioMap.put(gameRatio.getHomeTeam() + gameRatio.getAwayTeam(), gameRatio);
         }
+
+        List<Bingo> bingoList = new ArrayList<>();
 
         for (GameRatio jufuGameRatio : jufuRatioList) {
             logger.info("analyzing game {} vs {}", jufuGameRatio.getHomeTeam(), jufuGameRatio.getAwayTeam());
@@ -30,6 +35,12 @@ public class GameRatioAnalyzer {
                 logger.info("the game {} vs {} is not found in hga", jufuGameRatio.getHomeTeam(), jufuGameRatio.getAwayTeam());
                 continue;
             }
+            Bingo bingo = new Bingo();
+            bingo.setHomeTeam(jufuGameRatio.getHomeTeam());
+            bingo.setAwayTeam(jufuGameRatio.getAwayTeam());
+            bingo.setLeague(jufuGameRatio.getLeague());
+            List<LuckyRatio> luckyRatioList = new ArrayList<>();
+            bingo.setLuckyRatioList(luckyRatioList);
             for (Map.Entry<String, Double> jufuHomeTeamRatioEntry : jufuGameRatio.getHomeTeamRatioMap().entrySet()) {
                 String condition = jufuHomeTeamRatioEntry.getKey();
                 Double jufuPercent = jufuHomeTeamRatioEntry.getValue();
@@ -37,9 +48,13 @@ public class GameRatioAnalyzer {
                 logger.info("[{}] [jufu]:{}% [hga]: {}", condition, jufuPercent, hgaRatio);
                 if (isLuckyDraw(jufuPercent, hgaRatio)) {
                     logger.info("Bingo! {} vs {}, bet on {}, [hga]:{} [jufu]:{}%", jufuGameRatio.getHomeTeam(), jufuGameRatio.getAwayTeam(), condition, hgaRatio, jufuPercent);
+                    LuckyRatio luckyRatio = new LuckyRatio(jufuPercent, hgaRatio);
+                    luckyRatioList.add(luckyRatio);
                 }
             }
+            bingoList.add(bingo);
         }
+        return bingoList;
     }
 
     private boolean isLuckyDraw(Double jufuPercent, Double hgaGameRatio) {

@@ -1,11 +1,15 @@
 package lingda.controller;
 
+import lingda.model.Bingo;
 import lingda.service.GambleRatioService;
 import lingda.service.GameRatioAnalyzer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by lingda on 25/06/2017.
@@ -21,11 +25,12 @@ public class GambleRatioController {
     private GambleRatioService gambleRatioService;
 
     @GetMapping
-    public void getLuckyGames(){
+    public List<Bingo> getLuckyGames(){
         try {
-            gameRatioAnalyzer.analyze(gambleRatioService.getRatioListFromJufu(), gambleRatioService.getRatioListFromHga());
+            return gameRatioAnalyzer.analyze(gambleRatioService.getRatioListFromJufu(), gambleRatioService.getRatioListFromHga());
         } catch (Exception e) {
             e.printStackTrace();
+            return Collections.emptyList();
         }
 
     }

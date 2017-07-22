@@ -69,7 +69,7 @@ public class GambleRatioCrawlerJufuImpl implements GambleRatioCrawler {
             }
             List<WebElement> accordionList = activeGamesAll.findElements(By.className("accordion_show"));
             List<String> htmlList = new ArrayList<>();
-            int count = 5;
+            int count = 15;
             for (WebElement accordion : accordionList) {
                 if (count-- < 0) {
                     break;
