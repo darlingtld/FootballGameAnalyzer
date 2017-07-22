@@ -9,16 +9,33 @@ public class GameRatio {
 
     private String homeTeam;
     private String awayTeam;
+    private String league;
     //    ratio map is comprised of <score, ratio>.  e.g. [<1-0, 4.5>, <1-1, 6.7>, ...]
-    private Map<String, Double> ratioMap;
+    private Map<String, Double> homeTeamRatioMap;
+    private Map<String, Double> awayTeamRatioMap;
 
-    @Override
-    public String toString() {
-        return "GameRatio{" +
-                "homeTeam='" + homeTeam + '\'' +
-                ", awayTeam='" + awayTeam + '\'' +
-                ", ratioMap=" + ratioMap +
-                '}';
+    public String getLeague() {
+        return league;
+    }
+
+    public Map<String, Double> getHomeTeamRatioMap() {
+        return homeTeamRatioMap;
+    }
+
+    public void setHomeTeamRatioMap(Map<String, Double> homeTeamRatioMap) {
+        this.homeTeamRatioMap = homeTeamRatioMap;
+    }
+
+    public Map<String, Double> getAwayTeamRatioMap() {
+        return awayTeamRatioMap;
+    }
+
+    public void setAwayTeamRatioMap(Map<String, Double> awayTeamRatioMap) {
+        this.awayTeamRatioMap = awayTeamRatioMap;
+    }
+
+    public void setLeague(String league) {
+        this.league = league;
     }
 
     public String getHomeTeam() {
@@ -37,11 +54,14 @@ public class GameRatio {
         this.awayTeam = awayTeam;
     }
 
-    public Map<String, Double> getRatioMap() {
-        return ratioMap;
-    }
-
-    public void setRatioMap(Map<String, Double> ratioMap) {
-        this.ratioMap = ratioMap;
+    @Override
+    public String toString() {
+        return "GameRatio{" +
+                "homeTeam='" + homeTeam + '\'' +
+                ", awayTeam='" + awayTeam + '\'' +
+                ", league='" + league + '\'' +
+                ", homeTeamRatioMap=" + homeTeamRatioMap +
+                ", awayTeamRatioMap=" + awayTeamRatioMap +
+                '}';
     }
 }

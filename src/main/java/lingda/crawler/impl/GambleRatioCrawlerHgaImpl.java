@@ -12,12 +12,20 @@ import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 import lingda.crawler.GambleRatioCrawler;
 import lingda.model.GameRatio;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by lingda on 22/07/2017.
@@ -37,9 +45,10 @@ public class GambleRatioCrawlerHgaImpl implements GambleRatioCrawler {
     private String password;
 
     @Override
-    public String loginAndPDPage() throws Exception {
+    public List<String> loginAndPDPage() throws Exception {
         logger.info("trying to login to {}", website);
         try (final WebClient webClient = new WebClient(BrowserVersion.CHROME)) {
+            webClient.addRequestHeader("Accept-Language", "zh-CN,zh;q=0.8,en;q=0.6");
             webClient.getOptions().setThrowExceptionOnScriptError(false);
             webClient.getOptions().setJavaScriptEnabled(true);
             webClient.getOptions().setTimeout(20000);
@@ -76,13 +85,13 @@ public class GambleRatioCrawlerHgaImpl implements GambleRatioCrawler {
             final HtmlPage gameHallPage = (HtmlPage) gameHallWindow.getEnclosedPage();
 
             Thread.sleep(1000);
-            System.out.println("game hall page : " + gameHallPage.asXml());
+//            System.out.println("game hall page : " + gameHallPage.asXml());
 
             final FrameWindow memOrderWindow = gameHallPage.getFrameByName("mem_order");
 
             Thread.sleep(1000);
             HtmlPage memOrderPage = (HtmlPage) memOrderWindow.getEnclosedPage();
-            System.out.println("mem order page : " + memOrderPage.asXml());
+//            System.out.println("mem order page : " + memOrderPage.asXml());
 
 //            click on 波胆
             DomElement element = memOrderPage.getElementById("wtype_FT_pd");
@@ -95,11 +104,68 @@ public class GambleRatioCrawlerHgaImpl implements GambleRatioCrawler {
             Thread.sleep(1000);
             HtmlPage bodyPage = (HtmlPage) bodyWindow.getEnclosedPage();
 //            System.out.println("body page : " + bodyPage.asXml());
-            return bodyPage.asXml();
+            return Collections.singletonList(bodyPage.asXml());
         }
     }
 
-    public List<GameRatio> getGameRatioByParsingHtml(String html) {
-        return null;
+    @Override
+    public List<GameRatio> getGameRatioByParsingHtml(List<String> htmlList) {
+        List<GameRatio> gameRatioList = new ArrayList<>();
+        for (String html : htmlList) {
+//        make sure it is 波胆
+            if (!html.contains("波胆：全场")) {
+                throw new RuntimeException("this page is not for 波胆：全场");
+            }
+            Document doc = Jsoup.parse(html);
+            Element showtable = doc.getElementById("showtable");
+            Element titleTR = showtable.getElementById("title_tr");
+            Elements elements = titleTR.getElementsByClass("bet_title_point");
+//            for (Element ele : elements) {
+//                System.out.println(ele.toString());
+//            }
+
+            Elements trElements = showtable.getElementsByTag("tr");
+            for (int i = 0; i < trElements.size(); i++) {
+                Element tr = trElements.get(i);
+//        bet_game_league, bet_game_correct_top, bet_game_correct_other
+                if (tr.hasClass("bet_game_league")) {
+//                get the league name
+                    GameRatio gameRatio = new GameRatio();
+                    Map<String, Double> homeTeamRatioMap = new LinkedHashMap<>();
+                    Map<String, Double> awayTeamRatioMap = new LinkedHashMap<>();
+                    gameRatio.setLeague(tr.text());
+//                get the home team ratio
+                    Element home = trElements.get(i + 1);
+                    parseRowData(home, gameRatio, homeTeamRatioMap, true);
+                    gameRatio.setHomeTeamRatioMap(homeTeamRatioMap);
+//                get the away team ratio
+                    Element away = trElements.get(i + 2);
+                    parseRowData(away, gameRatio, awayTeamRatioMap, false);
+                    gameRatio.setAwayTeamRatioMap(awayTeamRatioMap);
+                    gameRatioList.add(gameRatio);
+                }
+            }
+        }
+        return gameRatioList;
+    }
+
+    private void parseRowData(Element home, GameRatio gameRatio, Map<String, Double> teamRatioMap, Boolean isHome) {
+        Elements homeElements = home.getElementsByTag("td");
+        for (Element homeEle : homeElements) {
+            if (homeEle.hasClass("bet_game_time")) {
+                String gameTime = homeEle.text();
+            } else if (homeEle.hasClass("bet_team")) {
+                String teamName = homeEle.text();
+                if (isHome) {
+                    gameRatio.setHomeTeam(teamName);
+                } else {
+                    gameRatio.setAwayTeam(teamName);
+                }
+            } else if (homeEle.hasClass("bet_text")) {
+                teamRatioMap.put(homeEle.getElementsByAttribute("title").get(0).attr("title"), Double.parseDouble(homeEle.text()));
+            } else if (homeEle.hasClass("bet_correct_bg")) {
+                teamRatioMap.put(homeEle.getElementsByAttribute("title").get(0).attr("title"), Double.parseDouble(homeEle.text()));
+            }
+        }
     }
 }
