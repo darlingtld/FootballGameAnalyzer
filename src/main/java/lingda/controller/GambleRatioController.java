@@ -1,5 +1,6 @@
 package lingda.controller;
 
+import lingda.service.GambleRatioService;
 import lingda.service.GameRatioAnalyzer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,8 +17,16 @@ public class GambleRatioController {
     @Autowired
     private GameRatioAnalyzer gameRatioAnalyzer;
 
+    @Autowired
+    private GambleRatioService gambleRatioService;
+
     @GetMapping
     public void getLuckyGames(){
+        try {
+            gameRatioAnalyzer.analyze(gambleRatioService.getRatioListFromJufu(), gambleRatioService.getRatioListFromHga());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 

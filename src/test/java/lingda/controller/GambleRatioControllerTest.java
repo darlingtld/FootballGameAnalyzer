@@ -9,10 +9,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -27,23 +25,8 @@ public class GambleRatioControllerTest {
     private MockMvc mockMvc;
 
     @Test
-    public void shouldReturnSearchResult() throws Exception {
-        this.mockMvc.perform(post("/search/show").accept(MediaType.APPLICATION_JSON).content("{\"term\":\"hero\"}")
-                .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk())
-                .andExpect(content().string(containsString("Hero")));
-    }
-
-    @Test
-    public void shouldReturnSearchResultUsingChinese() throws Exception {
-        this.mockMvc.perform(post("/search/show").accept(MediaType.APPLICATION_JSON).content("{\"term\":\"英雄\"}")
-                .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk())
-                .andExpect(content().string(containsString("英雄")));
-    }
-
-    @Test
-    public void shouldReturnSearchResultUsingPinyin() throws Exception {
-        this.mockMvc.perform(post("/search/show").accept(MediaType.APPLICATION_JSON).content("{\"term\":\"yingxiong\"}")
-                .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk())
-                .andExpect(content().string(containsString("英雄")));
+    public void shouldReturnBingoResult() throws Exception {
+        this.mockMvc.perform(get("/ratio")
+                .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk());
     }
 }
