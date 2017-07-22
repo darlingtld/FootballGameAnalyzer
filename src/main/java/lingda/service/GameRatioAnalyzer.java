@@ -46,11 +46,14 @@ public class GameRatioAnalyzer {
                 Double jufuPercent = jufuHomeTeamRatioEntry.getValue();
                 Double hgaRatio = hgaGameRatio.getHomeTeamRatioMap().getOrDefault(condition, hgaGameRatio.getHomeTeamRatioMap().get("其他比分"));
                 logger.info("[{}] [jufu]:{}% [hga]: {}", condition, jufuPercent, hgaRatio);
+                LuckyRatio luckyRatio;
                 if (isLuckyDraw(jufuPercent, hgaRatio)) {
                     logger.info("Bingo! {} vs {}, bet on {}, [hga]:{} [jufu]:{}%", jufuGameRatio.getHomeTeam(), jufuGameRatio.getAwayTeam(), condition, hgaRatio, jufuPercent);
-                    LuckyRatio luckyRatio = new LuckyRatio(jufuPercent, hgaRatio);
-                    luckyRatioList.add(luckyRatio);
+                    luckyRatio = new LuckyRatio(condition, jufuPercent, hgaRatio, true);
+                } else {
+                    luckyRatio = new LuckyRatio(condition, jufuPercent, hgaRatio, false);
                 }
+                luckyRatioList.add(luckyRatio);
             }
             bingoList.add(bingo);
         }

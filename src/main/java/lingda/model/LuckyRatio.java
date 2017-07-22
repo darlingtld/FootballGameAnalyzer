@@ -5,24 +5,45 @@ package lingda.model;
  */
 public class LuckyRatio {
 
+    private String condition;
     private Double jufuPercent;
     private Double hgaRatio;
-
-    @Override
-    public String toString() {
-        return "LuckyRatio{" +
-                "jufuPercent=" + jufuPercent +
-                ", hgaRatio=" + hgaRatio +
-                '}';
+    private Boolean isWin;
+    public LuckyRatio(String condition, Double jufuPercent, Double hgaRatio, Boolean isWin) {
+        this.condition = condition;
+        this.jufuPercent = jufuPercent;
+        this.hgaRatio = hgaRatio;
+        this.isWin = isWin;
     }
 
     public LuckyRatio() {
     }
 
-    public LuckyRatio(Double jufuPercent, Double hgaRatio) {
+    public String getCondition() {
+        return condition;
+    }
 
-        this.jufuPercent = jufuPercent;
-        this.hgaRatio = hgaRatio;
+    public void setCondition(String condition) {
+        this.condition = condition;
+    }
+
+    @Override
+    public String toString() {
+        return "LuckyRatio{" +
+                "condition='" + condition + '\'' +
+                ", jufuPercent=" + jufuPercent +
+                ", hgaRatio=" + hgaRatio +
+                ", isWin=" + isWin +
+                '}';
+    }
+
+    public Boolean getWin() {
+
+        return isWin;
+    }
+
+    public void setWin(Boolean win) {
+        isWin = win;
     }
 
     public Double getJufuPercent() {
