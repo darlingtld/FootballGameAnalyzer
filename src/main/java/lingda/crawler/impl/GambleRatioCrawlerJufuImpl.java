@@ -50,7 +50,7 @@ public class GambleRatioCrawlerJufuImpl implements GambleRatioCrawler {
     @Override
     public List<String> loginAndPDPage() throws Exception {
         logger.info("trying to login to {}", website);
-        System.setProperty("webdriver.chrome.driver", "/Users/lingda/splunk/workspace/FootballGameAnalyzer/src/main/resources/chromedriver");
+        System.setProperty("webdriver.chrome.driver", this.getClass().getClassLoader().getResource("chromedriver").getPath());
         WebDriver driver = new ChromeDriver(new ChromeDriverService.Builder().withSilent(true).build());
         try {
             driver.get(website);
