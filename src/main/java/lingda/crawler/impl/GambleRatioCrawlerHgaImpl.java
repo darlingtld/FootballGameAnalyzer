@@ -23,6 +23,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -137,16 +138,43 @@ public class GambleRatioCrawlerHgaImpl implements GambleRatioCrawler {
 //                get the home team ratio
                     Element home = trElements.get(i + 1);
                     parseRowData(home, gameRatio, homeTeamRatioMap, true);
-                    gameRatio.setHomeTeamRatioMap(homeTeamRatioMap);
+
 //                get the away team ratio
                     Element away = trElements.get(i + 2);
                     parseRowData(away, gameRatio, awayTeamRatioMap, false);
-                    gameRatio.setAwayTeamRatioMap(awayTeamRatioMap);
+
+                    postProcessRatioMapToAlignWithJufu(gameRatio, homeTeamRatioMap, awayTeamRatioMap);
                     gameRatioList.add(gameRatio);
                 }
             }
         }
         return gameRatioList;
+    }
+
+    private void postProcessRatioMapToAlignWithJufu(GameRatio gameRatio, Map<String, Double> homeTeamRatioMap, Map<String, Double> awayTeamRatioMap) {
+        for (Map.Entry<String, Double> ratio : awayTeamRatioMap.entrySet()) {
+            if (!homeTeamRatioMap.containsKey(ratio.getKey())) {
+                homeTeamRatioMap.put(ratio.getKey(), ratio.getValue());
+            }
+        }
+
+        for (Map.Entry<String, Double> ratio : homeTeamRatioMap.entrySet()) {
+            if (!awayTeamRatioMap.containsKey(ratio.getKey())) {
+                awayTeamRatioMap.put(ratio.getKey(), ratio.getValue());
+            }
+        }
+
+//        reverse the key in awayTeamRatioMap
+        Map<String, Double> reversedAwayTeamRatioMap = new HashMap<>();
+        for (Map.Entry<String, Double> ratio : awayTeamRatioMap.entrySet()) {
+            if (ratio.getKey().contains("-")) {
+                reversedAwayTeamRatioMap.put(new StringBuilder(ratio.getKey()).reverse().toString(), ratio.getValue());
+            } else {
+                reversedAwayTeamRatioMap.put(ratio.getKey(), ratio.getValue());
+            }
+        }
+        gameRatio.setHomeTeamRatioMap(homeTeamRatioMap);
+        gameRatio.setAwayTeamRatioMap(reversedAwayTeamRatioMap);
     }
 
     private void parseRowData(Element home, GameRatio gameRatio, Map<String, Double> teamRatioMap, Boolean isHome) {
