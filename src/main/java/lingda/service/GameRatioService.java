@@ -12,7 +12,7 @@ import java.util.List;
  * Created by lingda on 22/07/2017.
  */
 @Service
-public class GambleRatioService {
+public class GameRatioService {
 
     @Autowired
     @Qualifier("jufuCrawler")

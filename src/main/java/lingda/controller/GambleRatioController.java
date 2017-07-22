@@ -1,7 +1,8 @@
 package lingda.controller;
 
 import lingda.model.Bingo;
-import lingda.service.GambleRatioService;
+import lingda.service.GameRatioResultContainer;
+import lingda.service.GameRatioService;
 import lingda.service.GameRatioAnalyzer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,15 +20,12 @@ import java.util.List;
 public class GambleRatioController {
 
     @Autowired
-    private GameRatioAnalyzer gameRatioAnalyzer;
-
-    @Autowired
-    private GambleRatioService gambleRatioService;
+    private GameRatioResultContainer gameRatioResultContainer;
 
     @GetMapping
     public List<Bingo> getLuckyGames(){
         try {
-            return gameRatioAnalyzer.analyze(gambleRatioService.getRatioListFromJufu(), gambleRatioService.getRatioListFromHga());
+            return gameRatioResultContainer.getBingoList();
         } catch (Exception e) {
             e.printStackTrace();
             return Collections.emptyList();

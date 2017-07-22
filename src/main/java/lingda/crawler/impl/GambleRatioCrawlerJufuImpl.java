@@ -44,6 +44,8 @@ public class GambleRatioCrawlerJufuImpl implements GambleRatioCrawler {
     private static final Pattern HOMETEAM_PATTERN = Pattern.compile(HOMETEAM_REGEX);
     private static final String AWAYTEAM_REGEX = "v(.*?)\\|";
     private static final Pattern AWAYTEAM_PATTERN = Pattern.compile(AWAYTEAM_REGEX);
+    private static final String GAMETIME_REGEX = "\\|(.*)";
+    private static final Pattern GAMETIME_PATTERN = Pattern.compile(GAMETIME_REGEX);
 
     @Override
     public List<String> loginAndPDPage() throws Exception {
@@ -106,6 +108,7 @@ public class GambleRatioCrawlerJufuImpl implements GambleRatioCrawler {
             gameRatio.setLeague(leagueName);
             gameRatio.setHomeTeam(parseHomeTeam(bothTeams));
             gameRatio.setAwayTeam(parseAwayTeam(bothTeams));
+            gameRatio.setGameTime(parseGameTime(bothTeams));
             Map<String, Double> homeTeamRatioMap = new LinkedHashMap<>();
             Map<String, Double> awayTeamRatioMap = new LinkedHashMap<>();
 //            get 波胆全场
@@ -124,6 +127,15 @@ public class GambleRatioCrawlerJufuImpl implements GambleRatioCrawler {
         }
 
         return gameRatioList;
+    }
+
+    private String parseGameTime(String bothTeams) {
+        Matcher m = GAMETIME_PATTERN.matcher(bothTeams);
+        if (m.find()) {
+            return m.group(1).trim();
+        } else {
+            return "";
+        }
     }
 
     private String parseAwayTeam(String bothTeams) {

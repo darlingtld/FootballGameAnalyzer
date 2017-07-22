@@ -10,6 +10,8 @@ public class Bingo {
     private String homeTeam;
     private String awayTeam;
     private String league;
+    private String gameTime;
+    private List<LuckyRatio> luckyRatioList;
 
     @Override
     public String toString() {
@@ -17,8 +19,17 @@ public class Bingo {
                 "homeTeam='" + homeTeam + '\'' +
                 ", awayTeam='" + awayTeam + '\'' +
                 ", league='" + league + '\'' +
+                ", gameTime='" + gameTime + '\'' +
                 ", luckyRatioList=" + luckyRatioList +
                 '}';
+    }
+
+    public String getGameTime() {
+        return gameTime;
+    }
+
+    public void setGameTime(String gameTime) {
+        this.gameTime = gameTime;
     }
 
     public String getLeague() {
@@ -53,6 +64,4 @@ public class Bingo {
     public void setLuckyRatioList(List<LuckyRatio> luckyRatioList) {
         this.luckyRatioList = luckyRatioList;
     }
-
-    private List<LuckyRatio> luckyRatioList;
 }

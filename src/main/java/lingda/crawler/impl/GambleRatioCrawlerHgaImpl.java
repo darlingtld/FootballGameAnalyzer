@@ -182,6 +182,7 @@ public class GambleRatioCrawlerHgaImpl implements GambleRatioCrawler {
         for (Element homeEle : homeElements) {
             if (homeEle.hasClass("bet_game_time")) {
                 String gameTime = homeEle.text();
+                gameRatio.setGameTime(gameTime);
             } else if (homeEle.hasClass("bet_team")) {
                 String teamName = homeEle.text();
                 if (isHome) {

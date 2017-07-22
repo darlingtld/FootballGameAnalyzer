@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -39,6 +40,7 @@ public class GameRatioAnalyzer {
             bingo.setHomeTeam(jufuGameRatio.getHomeTeam());
             bingo.setAwayTeam(jufuGameRatio.getAwayTeam());
             bingo.setLeague(jufuGameRatio.getLeague());
+            bingo.setGameTime(hgaGameRatio.getGameTime());
             List<LuckyRatio> luckyRatioList = new ArrayList<>();
             bingo.setLuckyRatioList(luckyRatioList);
             for (Map.Entry<String, Double> jufuHomeTeamRatioEntry : jufuGameRatio.getHomeTeamRatioMap().entrySet()) {
@@ -47,11 +49,13 @@ public class GameRatioAnalyzer {
                 Double hgaRatio = hgaGameRatio.getHomeTeamRatioMap().getOrDefault(condition, hgaGameRatio.getHomeTeamRatioMap().get("其他比分"));
                 logger.info("[{}] [jufu]:{}% [hga]: {}", condition, jufuPercent, hgaRatio);
                 LuckyRatio luckyRatio;
-                if (isLuckyDraw(jufuPercent, hgaRatio)) {
+                Double ratioScore = getRatioScore(jufuPercent, hgaRatio);
+                boolean isLuckyDraw = ratioScore > 1;
+                if (isLuckyDraw) {
                     logger.info("Bingo! {} vs {}, bet on {}, [hga]:{} [jufu]:{}%", jufuGameRatio.getHomeTeam(), jufuGameRatio.getAwayTeam(), condition, hgaRatio, jufuPercent);
-                    luckyRatio = new LuckyRatio(condition, jufuPercent, hgaRatio, true);
+                    luckyRatio = new LuckyRatio(condition, jufuPercent, hgaRatio, ratioScore, true);
                 } else {
-                    luckyRatio = new LuckyRatio(condition, jufuPercent, hgaRatio, false);
+                    luckyRatio = new LuckyRatio(condition, jufuPercent, hgaRatio, ratioScore, false);
                 }
                 luckyRatioList.add(luckyRatio);
             }
@@ -60,9 +64,9 @@ public class GameRatioAnalyzer {
         return bingoList;
     }
 
-    private boolean isLuckyDraw(Double jufuPercent, Double hgaGameRatio) {
+    private Double getRatioScore(Double jufuPercent, Double hgaGameRatio) {
         double winningMoneyFromJufu = (jufuPercent / 100 + 1) * 0.95 - 1;
         logger.info("analyzer gives {}", winningMoneyFromJufu * (hgaGameRatio - 1));
-        return winningMoneyFromJufu * (hgaGameRatio - 1) > 1;
+        return winningMoneyFromJufu * (hgaGameRatio - 1);
     }
 }
