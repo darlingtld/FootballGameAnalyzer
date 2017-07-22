@@ -10,6 +10,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeDriverService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -48,7 +49,7 @@ public class GambleRatioCrawlerJufuImpl implements GambleRatioCrawler {
     public List<String> loginAndPDPage() throws Exception {
         logger.info("trying to login to {}", website);
         System.setProperty("webdriver.chrome.driver", "/Users/lingda/splunk/workspace/FootballGameAnalyzer/src/main/resources/chromedriver");
-        WebDriver driver = new ChromeDriver();
+        WebDriver driver = new ChromeDriver(new ChromeDriverService.Builder().withSilent(true).build());
         try {
             driver.get(website);
             Thread.sleep(3000);  // Let the user actually see something!
@@ -69,14 +70,18 @@ public class GambleRatioCrawlerJufuImpl implements GambleRatioCrawler {
             }
             List<WebElement> accordionList = activeGamesAll.findElements(By.className("accordion_show"));
             List<String> htmlList = new ArrayList<>();
-            int count = 15;
-            for (WebElement accordion : accordionList) {
-                if (count-- < 0) {
-                    break;
+//            int count = 2;
+            try {
+                for (WebElement accordion : accordionList) {
+//                    if (count-- < 0) {
+//                        break;
+//                    }
+                    accordion.click();
+                    Thread.sleep(1000);
+                    htmlList.add(driver.getPageSource());
                 }
-                accordion.click();
-                Thread.sleep(1000);
-                htmlList.add(driver.getPageSource());
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
             }
 
             return htmlList;
