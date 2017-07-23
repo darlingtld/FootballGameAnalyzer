@@ -66,8 +66,8 @@ public class GameRatioAnalyzer {
 
     private Double getRatioScore(Double jufuPercent, Double hgaGameRatio) {
 //        double winningMoneyFromJufu = (jufuPercent / 100 + 1) * 0.95 - 1;
-        logger.info("analyzer gives {}", (jufuPercent - 1) * hgaGameRatio);
-        return (jufuPercent - 1) * hgaGameRatio;
+        logger.info("analyzer gives {}", jufuPercent * (hgaGameRatio-1));
+        return jufuPercent * (hgaGameRatio-1);
 //        return winningMoneyFromJufu * (hgaGameRatio - 1);
     }
 }
