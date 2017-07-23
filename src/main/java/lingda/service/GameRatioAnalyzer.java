@@ -50,7 +50,7 @@ public class GameRatioAnalyzer {
                 logger.info("[{}] [jufu]:{}% [hga]: {}", condition, jufuPercent, hgaRatio);
                 LuckyRatio luckyRatio;
                 Double ratioScore = getRatioScore(jufuPercent, hgaRatio);
-                boolean isLuckyDraw = ratioScore > 1;
+                boolean isLuckyDraw = ratioScore >= 100;
                 if (isLuckyDraw) {
                     logger.info("Bingo! {} vs {}, bet on {}, [hga]:{} [jufu]:{}%", jufuGameRatio.getHomeTeam(), jufuGameRatio.getAwayTeam(), condition, hgaRatio, jufuPercent);
                     luckyRatio = new LuckyRatio(condition, jufuPercent, hgaRatio, ratioScore, true);
@@ -65,8 +65,9 @@ public class GameRatioAnalyzer {
     }
 
     private Double getRatioScore(Double jufuPercent, Double hgaGameRatio) {
-        double winningMoneyFromJufu = (jufuPercent / 100 + 1) * 0.95 - 1;
-        logger.info("analyzer gives {}", winningMoneyFromJufu * (hgaGameRatio - 1));
-        return winningMoneyFromJufu * (hgaGameRatio - 1);
+//        double winningMoneyFromJufu = (jufuPercent / 100 + 1) * 0.95 - 1;
+        logger.info("analyzer gives {}", (jufuPercent - 1) * hgaGameRatio);
+        return (jufuPercent - 1) * hgaGameRatio;
+//        return winningMoneyFromJufu * (hgaGameRatio - 1);
     }
 }

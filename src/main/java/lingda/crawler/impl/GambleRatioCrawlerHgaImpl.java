@@ -85,24 +85,24 @@ public class GambleRatioCrawlerHgaImpl implements GambleRatioCrawler {
 
             final HtmlPage gameHallPage = (HtmlPage) gameHallWindow.getEnclosedPage();
 
-            Thread.sleep(1000);
+            Thread.sleep(2000);
 //            System.out.println("game hall page : " + gameHallPage.asXml());
 
             final FrameWindow memOrderWindow = gameHallPage.getFrameByName("mem_order");
 
-            Thread.sleep(1000);
+            Thread.sleep(2000);
             HtmlPage memOrderPage = (HtmlPage) memOrderWindow.getEnclosedPage();
 //            System.out.println("mem order page : " + memOrderPage.asXml());
 
 //            click on 波胆
             DomElement element = memOrderPage.getElementById("wtype_FT_pd");
             element.click();
-            Thread.sleep(1000);
+            Thread.sleep(2000);
 
 //            get the content after the click event
             final FrameWindow bodyWindow = gameHallPage.getFrameByName("body");
 
-            Thread.sleep(1000);
+            Thread.sleep(2000);
             HtmlPage bodyPage = (HtmlPage) bodyWindow.getEnclosedPage();
 //            System.out.println("body page : " + bodyPage.asXml());
             return Collections.singletonList(bodyPage.asXml());
