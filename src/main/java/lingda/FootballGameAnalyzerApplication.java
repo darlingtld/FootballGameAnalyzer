@@ -6,10 +6,10 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
 @EnableScheduling
-public class FootbalGameAnalyzerApplication {
+public class FootballGameAnalyzerApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(FootbalGameAnalyzerApplication.class, args);
+        SpringApplication.run(FootballGameAnalyzerApplication.class, args);
     }
 
 }
