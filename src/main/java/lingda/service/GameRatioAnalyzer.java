@@ -20,8 +20,8 @@ import java.util.Map;
 public class GameRatioAnalyzer {
     private static final Logger logger = LoggerFactory.getLogger(GameRatioAnalyzer.class);
 
-    public List<Bingo> analyze(List<GameRatio> jufuRatioList, List<GameRatio> hgaGameRatioList) {
-        logger.info("start to analyze the ratio result between jufu and hga");
+    public List<Bingo> analyze(List<GameRatio> taoginRatioList, List<GameRatio> hgaGameRatioList) {
+        logger.info("start to analyze the ratio result between taogin and hga");
         HashMap<String, GameRatio> hgaGameRatioMap = new HashMap<>();
         for (GameRatio gameRatio : hgaGameRatioList) {
             hgaGameRatioMap.put(gameRatio.getHomeTeam() + gameRatio.getAwayTeam(), gameRatio);
@@ -29,33 +29,33 @@ public class GameRatioAnalyzer {
 
         List<Bingo> bingoList = new ArrayList<>();
 
-        for (GameRatio jufuGameRatio : jufuRatioList) {
-            logger.info("analyzing game {} vs {}", jufuGameRatio.getHomeTeam(), jufuGameRatio.getAwayTeam());
-            GameRatio hgaGameRatio = hgaGameRatioMap.get(jufuGameRatio.getHomeTeam() + jufuGameRatio.getAwayTeam());
+        for (GameRatio taoginGameRatio : taoginRatioList) {
+            logger.info("analyzing game {} vs {}", taoginGameRatio.getHomeTeam(), taoginGameRatio.getAwayTeam());
+            GameRatio hgaGameRatio = hgaGameRatioMap.get(taoginGameRatio.getHomeTeam() + taoginGameRatio.getAwayTeam());
             if (hgaGameRatio == null) {
-                logger.info("the game {} vs {} is not found in hga", jufuGameRatio.getHomeTeam(), jufuGameRatio.getAwayTeam());
+                logger.info("the game {} vs {} is not found in hga", taoginGameRatio.getHomeTeam(), taoginGameRatio.getAwayTeam());
                 continue;
             }
             Bingo bingo = new Bingo();
-            bingo.setHomeTeam(jufuGameRatio.getHomeTeam());
-            bingo.setAwayTeam(jufuGameRatio.getAwayTeam());
-            bingo.setLeague(jufuGameRatio.getLeague());
+            bingo.setHomeTeam(taoginGameRatio.getHomeTeam());
+            bingo.setAwayTeam(taoginGameRatio.getAwayTeam());
+            bingo.setLeague(taoginGameRatio.getLeague());
             bingo.setGameTime(hgaGameRatio.getGameTime());
             List<LuckyRatio> luckyRatioList = new ArrayList<>();
             bingo.setLuckyRatioList(luckyRatioList);
-            for (Map.Entry<String, Double> jufuHomeTeamRatioEntry : jufuGameRatio.getHomeTeamRatioMap().entrySet()) {
-                String condition = jufuHomeTeamRatioEntry.getKey();
-                Double jufuPercent = jufuHomeTeamRatioEntry.getValue();
+            for (Map.Entry<String, Double> taoginHomeTeamRatioEntry : taoginGameRatio.getHomeTeamRatioMap().entrySet()) {
+                String condition = taoginHomeTeamRatioEntry.getKey();
+                Double taoginPercent = taoginHomeTeamRatioEntry.getValue();
                 Double hgaRatio = hgaGameRatio.getHomeTeamRatioMap().getOrDefault(condition, hgaGameRatio.getHomeTeamRatioMap().get("其他比分"));
-                logger.info("[{}] [jufu]:{}% [hga]: {}", condition, jufuPercent, hgaRatio);
+                logger.info("[{}] [taogin]:{}% [hga]: {}", condition, taoginPercent, hgaRatio);
                 LuckyRatio luckyRatio;
-                Double ratioScore = getRatioScore(jufuPercent, hgaRatio);
-                boolean isLuckyDraw = ratioScore >= 100;
+                Double ratioScore = getRatioScore(taoginPercent, hgaRatio);
+                boolean isLuckyDraw = ratioScore >= 110;
                 if (isLuckyDraw) {
-                    logger.info("Bingo! {} vs {}, bet on {}, [hga]:{} [jufu]:{}%", jufuGameRatio.getHomeTeam(), jufuGameRatio.getAwayTeam(), condition, hgaRatio, jufuPercent);
-                    luckyRatio = new LuckyRatio(condition, jufuPercent, hgaRatio, ratioScore, true);
+                    logger.info("Bingo! {} vs {}, bet on {}, [hga]:{} [taogin]:{}%", taoginGameRatio.getHomeTeam(), taoginGameRatio.getAwayTeam(), condition, hgaRatio, taoginPercent);
+                    luckyRatio = new LuckyRatio(condition, taoginPercent, hgaRatio, ratioScore, true);
                 } else {
-                    luckyRatio = new LuckyRatio(condition, jufuPercent, hgaRatio, ratioScore, false);
+                    luckyRatio = new LuckyRatio(condition, taoginPercent, hgaRatio, ratioScore, false);
                 }
                 luckyRatioList.add(luckyRatio);
             }
@@ -64,10 +64,10 @@ public class GameRatioAnalyzer {
         return bingoList;
     }
 
-    private Double getRatioScore(Double jufuPercent, Double hgaGameRatio) {
+    private Double getRatioScore(Double taoginPercent, Double hgaGameRatio) {
 //        double winningMoneyFromJufu = (jufuPercent / 100 + 1) * 0.95 - 1;
-        logger.info("analyzer gives {}", jufuPercent * (hgaGameRatio-1));
-        return jufuPercent * (hgaGameRatio-1);
+        logger.info("analyzer gives {}", taoginPercent * (hgaGameRatio - 1));
+        return taoginPercent * (hgaGameRatio - 1);
 //        return winningMoneyFromJufu * (hgaGameRatio - 1);
     }
 }

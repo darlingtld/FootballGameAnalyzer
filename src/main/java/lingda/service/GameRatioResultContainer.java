@@ -1,6 +1,7 @@
 package lingda.service;
 
 import lingda.model.Bingo;
+import lingda.model.GameRatio;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,11 +37,19 @@ public class GameRatioResultContainer {
         }
     }
 
-    @Scheduled(fixedRate = SECOND * 60)
+    @Scheduled(fixedRate = SECOND * 30)
     public void fixedRateJob() {
         logger.info("start a job to fetch ration and analyze at {}", LocalDateTime.now());
         try {
-            this.bingoList = gameRatioAnalyzer.analyze(gameRatioService.getRatioListFromJufu(), gameRatioService.getRatioListFromHga());
+            List<GameRatio> hgaGameRatioList = gameRatioService.getRatioListFromHga();
+            if (hgaGameRatioList == null || hgaGameRatioList.isEmpty()) {
+                return;
+            }
+            List<GameRatio> taoginGameRatioList = gameRatioService.getRatioListFromTaogin();
+            if (taoginGameRatioList == null || taoginGameRatioList.isEmpty()) {
+                return;
+            }
+            this.bingoList = gameRatioAnalyzer.analyze(taoginGameRatioList, hgaGameRatioList);
             logger.info("job finished at {}", LocalDateTime.now());
         } catch (Exception e) {
             logger.error(e.getMessage(), e);

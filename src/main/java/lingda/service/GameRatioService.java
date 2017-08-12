@@ -22,6 +22,10 @@ public class GameRatioService {
     @Qualifier("hgaCrawler")
     private GambleRatioCrawler gambleRatioHgaCrawler;
 
+    @Autowired
+    @Qualifier("taoginCrawler")
+    private GambleRatioCrawler gambleRatioTaoginCrawler;
+
     public List<GameRatio> getRatioListFromJufu() throws Exception {
         List<String> page = gambleRatioJufuCrawler.loginAndPDPage();
         List<GameRatio> gameRatioList = gambleRatioJufuCrawler.getGameRatioByParsingHtml(page);
@@ -35,6 +39,15 @@ public class GameRatioService {
     public List<GameRatio> getRatioListFromHga() throws Exception {
         List<String> pdPage = gambleRatioHgaCrawler.loginAndPDPage();
         List<GameRatio> gambleRatioList = gambleRatioHgaCrawler.getGameRatioByParsingHtml(pdPage);
+//        for (GameRatio gameRatio : gambleRatioList) {
+//            System.out.println(gameRatio);
+//        }
+        return gambleRatioList;
+    }
+
+    public List<GameRatio> getRatioListFromTaogin() throws Exception {
+        List<String> pdPage = gambleRatioTaoginCrawler.loginAndPDPage();
+        List<GameRatio> gambleRatioList = gambleRatioTaoginCrawler.getGameRatioByParsingHtml(pdPage);
 //        for (GameRatio gameRatio : gambleRatioList) {
 //            System.out.println(gameRatio);
 //        }
