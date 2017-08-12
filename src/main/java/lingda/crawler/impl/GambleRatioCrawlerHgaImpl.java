@@ -94,6 +94,7 @@ public class GambleRatioCrawlerHgaImpl implements GambleRatioCrawler {
             HtmlPage memOrderPage = (HtmlPage) memOrderWindow.getEnclosedPage();
 //            System.out.println("mem order page : " + memOrderPage.asXml());
 
+            Thread.sleep(1000);
 //            click on 波胆
             DomElement element = memOrderPage.getElementById("wtype_FT_pd");
             element.click();

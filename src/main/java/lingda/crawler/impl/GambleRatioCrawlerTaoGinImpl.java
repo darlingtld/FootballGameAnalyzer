@@ -18,6 +18,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -70,12 +73,12 @@ public class GambleRatioCrawlerTaoGinImpl implements GambleRatioCrawler {
             WebElement gameListMenu = driver.findElement(By.id("cssmenu"));
             List<WebElement> liList = gameListMenu.findElement(By.className("open")).findElements(By.tagName("li"));
             List<String> htmlList = new ArrayList<>();
-            int count = 10;
+//            int count = 4;
             try {
                 for (WebElement li : liList) {
-                    if (count-- < 0) {
-                        break;
-                    }
+//                    if (count-- < 0) {
+//                        break;
+//                    }
                     li.click();
                     Thread.sleep(2500);
                     driver.switchTo().parentFrame().switchTo().frame("rightmenu");
@@ -156,10 +159,17 @@ public class GambleRatioCrawlerTaoGinImpl implements GambleRatioCrawler {
     }
 
     private String parseAwayTeam(String bothTeams) {
-        Matcher m = AWAYTEAM_PATTERN.matcher(bothTeams);
-        if (m.find()) {
-            return m.group(1).trim();
-        } else {
+        try {
+            String encodedString = URLEncoder.encode(bothTeams, "UTF-8");
+            String text = URLDecoder.decode(encodedString.replace("%C2%A0", "+"), "UTF-8");
+            Matcher m = AWAYTEAM_PATTERN.matcher(text);
+            if (m.find()) {
+                return m.group(1).trim();
+            } else {
+                return "";
+            }
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
             return "";
         }
     }

@@ -24,14 +24,17 @@ public class GameRatioAnalyzer {
         logger.info("start to analyze the ratio result between taogin and hga");
         HashMap<String, GameRatio> hgaGameRatioMap = new HashMap<>();
         for (GameRatio gameRatio : hgaGameRatioList) {
-            hgaGameRatioMap.put(gameRatio.getHomeTeam() + gameRatio.getAwayTeam(), gameRatio);
+//            hgaGameRatioMap.put(gameRatio.getHomeTeam() + gameRatio.getAwayTeam(), gameRatio);
+            hgaGameRatioMap.put(gameRatio.getHomeTeam(), gameRatio);
         }
 
         List<Bingo> bingoList = new ArrayList<>();
 
         for (GameRatio taoginGameRatio : taoginRatioList) {
             logger.info("analyzing game {} vs {}", taoginGameRatio.getHomeTeam(), taoginGameRatio.getAwayTeam());
-            GameRatio hgaGameRatio = hgaGameRatioMap.get(taoginGameRatio.getHomeTeam() + taoginGameRatio.getAwayTeam());
+//            GameRatio hgaGameRatio = hgaGameRatioMap.get(taoginGameRatio.getHomeTeam() + taoginGameRatio.getAwayTeam());
+            GameRatio hgaGameRatio = hgaGameRatioMap.get(taoginGameRatio.getHomeTeam());
+
             if (hgaGameRatio == null) {
                 logger.info("the game {} vs {} is not found in hga", taoginGameRatio.getHomeTeam(), taoginGameRatio.getAwayTeam());
                 continue;

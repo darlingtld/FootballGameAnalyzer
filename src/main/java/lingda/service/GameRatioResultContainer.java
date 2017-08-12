@@ -39,7 +39,7 @@ public class GameRatioResultContainer {
 
     @Scheduled(fixedRate = SECOND * 30)
     public void fixedRateJob() {
-        logger.info("start a job to fetch ration and analyze at {}", LocalDateTime.now());
+        logger.info("start a job to fetch ratio and analyze at {}", LocalDateTime.now());
         try {
             List<GameRatio> hgaGameRatioList = gameRatioService.getRatioListFromHga();
             if (hgaGameRatioList == null || hgaGameRatioList.isEmpty()) {
