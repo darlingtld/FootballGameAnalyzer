@@ -4,8 +4,12 @@ import lingda.crawler.GambleRatioCrawler;
 import lingda.model.GameRatio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -25,6 +29,24 @@ public class GameRatioService {
     @Autowired
     @Qualifier("taoginCrawler")
     private GambleRatioCrawler gambleRatioTaoginCrawler;
+
+    @Value("${development}")
+    private boolean isDevelopment;
+
+    @Value("${production.chromedriver.location}")
+    private String chromeDriverLocation;
+
+    @Autowired
+    private ResourceLoader resourceLoader;
+
+    @PostConstruct
+    private void postConstruct() throws IOException {
+        if (isDevelopment) {
+            System.setProperty("webdriver.chrome.driver", resourceLoader.getResource("classpath:chromedriver").getFile().getPath());
+        } else {
+            System.setProperty("webdriver.chrome.driver", chromeDriverLocation);
+        }
+    }
 
     public List<GameRatio> getRatioListFromJufu() throws Exception {
         List<String> page = gambleRatioJufuCrawler.loginAndPDPage();

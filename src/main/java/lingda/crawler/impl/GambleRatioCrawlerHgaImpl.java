@@ -1,21 +1,17 @@
 package lingda.crawler.impl;
 
-import com.gargoylesoftware.htmlunit.BrowserVersion;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.WebWindow;
-import com.gargoylesoftware.htmlunit.html.DomElement;
-import com.gargoylesoftware.htmlunit.html.FrameWindow;
-import com.gargoylesoftware.htmlunit.html.HtmlDivision;
-import com.gargoylesoftware.htmlunit.html.HtmlForm;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
-import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 import lingda.crawler.GambleRatioCrawler;
 import lingda.model.GameRatio;
+import lingda.util.DriverUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeDriverService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,9 +24,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by lingda on 22/07/2017.
- */
 @Component("hgaCrawler")
 public class GambleRatioCrawlerHgaImpl implements GambleRatioCrawler {
 
@@ -45,68 +38,39 @@ public class GambleRatioCrawlerHgaImpl implements GambleRatioCrawler {
     @Value("${gamble.website.hga.password}")
     private String password;
 
+
     @Override
     public List<String> loginAndPDPage() throws Exception {
         logger.info("trying to login to {}", website);
-        try (final WebClient webClient = new WebClient(BrowserVersion.CHROME)) {
-            webClient.addRequestHeader("Accept-Language", "zh-CN,zh;q=0.8,en;q=0.6");
-            webClient.getOptions().setThrowExceptionOnScriptError(false);
-            webClient.getOptions().setJavaScriptEnabled(true);
-            webClient.getOptions().setTimeout(20000);
-            webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-            webClient.getOptions().setCssEnabled(false);
-            webClient.getOptions().setUseInsecureSSL(true);
-            webClient.getOptions().setRedirectEnabled(true);
 
-            final HtmlPage mainPage = webClient.getPage(website);
-            final List<FrameWindow> window = mainPage.getFrames();
-            final HtmlPage loginPage = (HtmlPage) window.get(0).getEnclosedPage();
-            // Get the form that we are dealing with and within that form,
-            // find the submit button and the field that we want to change.
-            final HtmlForm form = loginPage.getFormByName("LoginForm");
-
-            final HtmlTextInput usernameInput = (HtmlTextInput) form.getElementsByAttribute("input", "id", "username").get(0);
-            usernameInput.setValueAttribute(username);
-            final HtmlPasswordInput passwordInput = (HtmlPasswordInput) form.getElementsByAttribute("input", "id", "passwd").get(0);
-            passwordInput.setValueAttribute(password);
-            // Now submit the form by clicking the button and get back the second page.
-            HtmlDivision button = (HtmlDivision) form.getElementsByAttribute("div", "class", "za_button").get(0);
-            WebWindow loginPageEnclosingWindow = loginPage.getEnclosingWindow();
-            button.click();
-            while (loginPageEnclosingWindow.getEnclosedPage() == loginPage) {
-                // The page hasn't changed.
-                Thread.sleep(500);
-            }
-
-            /*    Logged In    */
-            HtmlPage enclosedPage = (HtmlPage) loginPageEnclosingWindow.getParentWindow().getEnclosedPage();
-
-            final FrameWindow gameHallWindow = enclosedPage.getFrameByName("SI2_mem_index");
-
-            final HtmlPage gameHallPage = (HtmlPage) gameHallWindow.getEnclosedPage();
-
-            Thread.sleep(2000);
-//            System.out.println("game hall page : " + gameHallPage.asXml());
-
-            final FrameWindow memOrderWindow = gameHallPage.getFrameByName("mem_order");
-
-            Thread.sleep(2000);
-            HtmlPage memOrderPage = (HtmlPage) memOrderWindow.getEnclosedPage();
-//            System.out.println("mem order page : " + memOrderPage.asXml());
-
-            Thread.sleep(1000);
+        WebDriver driver = new ChromeDriver(new ChromeDriverService.Builder().withSilent(true).build());
+        try {
+            driver.get(website);
+//            login
+            driver.switchTo().frame("SI2_mem_index");
+            WebElement ipEle = DriverUtils.returnOnFindingElement(driver, By.className("banner"));
+            String ip = "http://" + ipEle.getText();
+            logger.info("trying to login to {}", ip);
+            driver = driver.switchTo().parentFrame();
+            driver.get(ip);
+            driver.switchTo().frame("SI2_mem_index");
+            WebElement cnEle = DriverUtils.returnOnFindingElement(driver, By.id("lang_cn"));
+            cnEle.click();
+            WebElement form = DriverUtils.returnOnFindingElement(driver, By.id("LoginForm"));
+            form.findElement(By.id("username")).sendKeys(username);
+            form.findElement(By.id("passwd")).sendKeys(password);
+            driver.findElement(By.className("za_button")).click();
+            logger.info("user logged in");
 //            click on 波胆
-            DomElement element = memOrderPage.getElementById("wtype_FT_pd");
-            element.click();
-            Thread.sleep(2000);
-
-//            get the content after the click event
-            final FrameWindow bodyWindow = gameHallPage.getFrameByName("body");
-
-            Thread.sleep(2000);
-            HtmlPage bodyPage = (HtmlPage) bodyWindow.getEnclosedPage();
-//            System.out.println("body page : " + bodyPage.asXml());
-            return Collections.singletonList(bodyPage.asXml());
+            driver = DriverUtils.returnOnFindingFrame(driver, "SI2_mem_index");
+            driver = DriverUtils.returnOnFindingFrame(driver, "mem_order");
+            WebElement bdEle = DriverUtils.returnOnFindingElement(driver, By.id("wtype_FT_pd"));
+            bdEle.click();
+            logger.info("get bo dan data");
+            driver = DriverUtils.returnOnFindingFrame(driver.switchTo().parentFrame(), "body");
+            return Collections.singletonList(driver.getPageSource());
+        } finally {
+            driver.quit();
         }
     }
 

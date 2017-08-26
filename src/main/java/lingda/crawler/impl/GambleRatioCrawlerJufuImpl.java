@@ -42,9 +42,6 @@ public class GambleRatioCrawlerJufuImpl implements GambleRatioCrawler {
     @Value("${gamble.website.jufu.password}")
     private String password;
 
-    @Autowired
-    private ResourceLoader resourceLoader;
-
     private static final String HOMETEAM_REGEX = "(.*?)\\(主\\)";
     private static final Pattern HOMETEAM_PATTERN = Pattern.compile(HOMETEAM_REGEX);
     private static final String AWAYTEAM_REGEX = "v(.*?)\\|";
@@ -55,9 +52,6 @@ public class GambleRatioCrawlerJufuImpl implements GambleRatioCrawler {
     @Override
     public List<String> loginAndPDPage() throws Exception {
         logger.info("trying to login to {}", website);
-        System.setProperty("webdriver.chrome.driver", resourceLoader.getResource("classpath:chromedriver").getFile().getPath());
-//        System.setProperty("webdriver.chrome.driver", "/Users/rita/Downloads/gamble/chromedriver");
-
         WebDriver driver = new ChromeDriver(new ChromeDriverService.Builder().withSilent(true).build());
         try {
             driver.get(website);

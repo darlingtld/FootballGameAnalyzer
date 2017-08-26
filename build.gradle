@@ -49,6 +49,7 @@ task buildAngular(type: Exec) {
 dependencies {
     compile('org.springframework.boot:spring-boot-starter')
     compile('org.springframework.boot:spring-boot-starter-web')
+    compile('org.springframework.boot:spring-boot-starter-logging')
     compile group: 'org.jsoup', name: 'jsoup', version: '1.10.2'
     compile group: 'com.google.guava', name: 'guava', version: '22.0'
     // https://mvnrepository.com/artifact/net.sourceforge.htmlunit/htmlunit

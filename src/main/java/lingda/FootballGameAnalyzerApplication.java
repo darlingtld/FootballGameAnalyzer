@@ -9,6 +9,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 public class FootballGameAnalyzerApplication {
 
     public static void main(String[] args) {
+
         SpringApplication.run(FootballGameAnalyzerApplication.class, args);
     }
 

@@ -24,9 +24,9 @@ public class GambleRatioCrawlerHgaImplTest {
     @Test
     public void shouldReturnGambleRatio() throws Exception {
         List<String> pdPage = gambleRatioCrawler.loginAndPDPage();
-        List<GameRatio> gambleRatioList = gambleRatioCrawler.getGameRatioByParsingHtml(pdPage);
-        for(GameRatio gameRatio: gambleRatioList){
-            System.out.println(gameRatio);
-        }
+//        List<GameRatio> gambleRatioList = gambleRatioCrawler.getGameRatioByParsingHtml(pdPage);
+//        for(GameRatio gameRatio: gambleRatioList){
+//            System.out.println(gameRatio);
+//        }
     }
 }
