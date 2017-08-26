@@ -2,6 +2,7 @@ package lingda.crawler.impl;
 
 import lingda.crawler.GambleRatioCrawler;
 import lingda.model.GameRatio;
+import lingda.util.DriverUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -55,14 +56,12 @@ public class GambleRatioCrawlerJufuImpl implements GambleRatioCrawler {
         WebDriver driver = new ChromeDriver(new ChromeDriverService.Builder().withSilent(true).build());
         try {
             driver.get(website);
-            Thread.sleep(3000);  // Let the user actually see something!
-            WebElement form = driver.findElement(By.className("logout_group"));
+            WebElement form = DriverUtils.returnOnFindingElement(driver, By.className("logout_group"));
             form.findElement(By.name("username")).sendKeys(username);
             form.findElement(By.name("password")).sendKeys(password);
             form.findElement(By.className("btn_login")).click();
-            Thread.sleep(3000);  // Let the user actually see something!
-//        String html = driver.getPageSource();
-            WebElement gameListMenu = driver.findElement(By.className("game_list_menu"));
+            logger.info("user logged in");
+            WebElement gameListMenu = DriverUtils.returnOnFindingElement(driver, By.className("game_list_menu"));
             List<WebElement> ulList = gameListMenu.findElements(By.tagName("ul"));
             WebElement activeGamesAll = null;
             for (WebElement webElement : ulList) {
@@ -71,22 +70,19 @@ public class GambleRatioCrawlerJufuImpl implements GambleRatioCrawler {
                     break;
                 }
             }
-            List<WebElement> accordionList = activeGamesAll.findElements(By.className("accordion_show"));
+            logger.info("get game list panel");
             List<String> htmlList = new ArrayList<>();
-//            int count = 2;
             try {
+                Thread.sleep(3000);
+                List<WebElement> accordionList = activeGamesAll.findElements(By.className("accordion_show"));
+                System.out.println(accordionList.size());
                 for (WebElement accordion : accordionList) {
-//                    if (count-- < 0) {
-//                        break;
-//                    }
                     accordion.click();
-                    Thread.sleep(1000);
                     htmlList.add(driver.getPageSource());
                 }
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
             }
-
             return htmlList;
         } finally {
             driver.quit();

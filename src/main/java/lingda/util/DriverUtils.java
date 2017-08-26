@@ -8,6 +8,8 @@ import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+
 public class DriverUtils {
     private static final Logger logger = LoggerFactory.getLogger(DriverUtils.class);
     private static final Integer POLLING_INTERVAL_MS = 100;
@@ -19,6 +21,23 @@ public class DriverUtils {
                 WebElement element = driver.findElement(selector);
                 logger.info("found element by {}", selector.toString());
                 return element;
+            } catch (NoSuchElementException e) {
+                try {
+                    Thread.sleep(POLLING_INTERVAL_MS);
+                } catch (InterruptedException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public static List<WebElement> returnOnFindingElements(WebDriver driver, By selector) {
+        while (true) {
+            try {
+                logger.info("finding element by {}", selector.toString());
+                List<WebElement> elementList = driver.findElements(selector);
+                logger.info("found element by {}", selector.toString());
+                return elementList;
             } catch (NoSuchElementException e) {
                 try {
                     Thread.sleep(POLLING_INTERVAL_MS);
@@ -49,7 +68,6 @@ public class DriverUtils {
     public static void returnOnFinishLoading(WebDriver driver, String loadingIndicator) {
         while (driver.getPageSource().contains(loadingIndicator)) {
             logger.info("waiting for page finish loading indicator={}", loadingIndicator);
-            logger.info(driver.getPageSource());
             try {
                 Thread.sleep(POLLING_INTERVAL_MS);
             } catch (InterruptedException e1) {

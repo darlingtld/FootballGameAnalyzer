@@ -71,6 +71,10 @@ public class GambleRatioCrawlerTaoGinImpl implements GambleRatioCrawler {
                     DriverUtils.returnOnFinishLoading(driver, "...loading...</font><img src=\"../Images/28.gif\" />");
                     String bdHtml = driver.getPageSource();
                     htmlList.add(bdHtml);
+                    if (htmlList.size() > 50) {
+                        logger.info("game list from taogin is greater than 50!!!  No need to continue crawling!!!");
+                        break;
+                    }
                     driver.switchTo().parentFrame().switchTo().frame("leftmenu");
                 }
             } catch (Exception e) {

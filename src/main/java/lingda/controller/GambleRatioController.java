@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by lingda on 25/06/2017.
@@ -23,12 +24,12 @@ public class GambleRatioController {
     private GameRatioResultContainer gameRatioResultContainer;
 
     @GetMapping
-    public List<Bingo> getLuckyGames(){
+    public Map<String, List<Bingo>> getLuckyGames() {
         try {
-            return gameRatioResultContainer.getBingoList();
+            return gameRatioResultContainer.getResultMap();
         } catch (Exception e) {
             e.printStackTrace();
-            return Collections.emptyList();
+            return Collections.emptyMap();
         }
 
     }

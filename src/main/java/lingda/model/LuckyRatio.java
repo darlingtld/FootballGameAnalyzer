@@ -6,40 +6,21 @@ package lingda.model;
 public class LuckyRatio {
 
     private String condition;
-    private Double taoginPercent;
-    private Double hgaRatio;
+    private Double fanbodanPercent;
+    private Double bodanRatio;
     private Double ratioScore;
     private Boolean isWin;
 
-    public LuckyRatio(String condition, Double taoginPercent, Double hgaRatio, Double ratioScore, Boolean isWin) {
+    public LuckyRatio(String condition, Double fanbodanPercent, Double bodanRatio, Double ratioScore, Boolean isWin) {
         this.condition = condition;
-        this.taoginPercent = taoginPercent;
-        this.hgaRatio = hgaRatio;
+        this.fanbodanPercent = fanbodanPercent;
+        this.bodanRatio = bodanRatio;
         this.ratioScore = ratioScore;
 
         this.isWin = isWin;
     }
 
     public LuckyRatio() {
-    }
-
-    @Override
-    public String toString() {
-        return "LuckyRatio{" +
-                "condition='" + condition + '\'' +
-                ", taoginPercent=" + taoginPercent +
-                ", hgaRatio=" + hgaRatio +
-                ", ratioScore=" + ratioScore +
-                ", isWin=" + isWin +
-                '}';
-    }
-
-    public Double getRatioScore() {
-        return ratioScore;
-    }
-
-    public void setRatioScore(Double ratioScore) {
-        this.ratioScore = ratioScore;
     }
 
     public String getCondition() {
@@ -50,29 +31,35 @@ public class LuckyRatio {
         this.condition = condition;
     }
 
-    public Boolean getWin() {
+    public Double getFanbodanPercent() {
+        return fanbodanPercent;
+    }
 
+    public void setFanbodanPercent(Double fanbodanPercent) {
+        this.fanbodanPercent = fanbodanPercent;
+    }
+
+    public Double getBodanRatio() {
+        return bodanRatio;
+    }
+
+    public void setBodanRatio(Double bodanRatio) {
+        this.bodanRatio = bodanRatio;
+    }
+
+    public Double getRatioScore() {
+        return ratioScore;
+    }
+
+    public void setRatioScore(Double ratioScore) {
+        this.ratioScore = ratioScore;
+    }
+
+    public Boolean getWin() {
         return isWin;
     }
 
     public void setWin(Boolean win) {
         isWin = win;
-    }
-
-    public Double getTaoginPercent() {
-
-        return taoginPercent;
-    }
-
-    public void setTaoginPercent(Double taoginPercent) {
-        this.taoginPercent = taoginPercent;
-    }
-
-    public Double getHgaRatio() {
-        return hgaRatio;
-    }
-
-    public void setHgaRatio(Double hgaRatio) {
-        this.hgaRatio = hgaRatio;
     }
 }

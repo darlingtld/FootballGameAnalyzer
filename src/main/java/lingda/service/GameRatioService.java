@@ -2,6 +2,8 @@ package lingda.service;
 
 import lingda.crawler.GambleRatioCrawler;
 import lingda.model.GameRatio;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,6 +19,8 @@ import java.util.List;
  */
 @Service
 public class GameRatioService {
+
+    private static final Logger logger = LoggerFactory.getLogger(GameRatioService.class);
 
     @Autowired
     @Qualifier("jufuCrawler")
@@ -48,31 +52,39 @@ public class GameRatioService {
         }
     }
 
+    //    反波胆
     public List<GameRatio> getRatioListFromJufu() throws Exception {
         List<String> page = gambleRatioJufuCrawler.loginAndPDPage();
         List<GameRatio> gameRatioList = gambleRatioJufuCrawler.getGameRatioByParsingHtml(page);
-//        for(GameRatio gameRatio : gameRatioList){
-//            System.out.println(gameRatio);
-//        }
+        logger.info("============ 钜富 ============");
+        for (GameRatio gameRatio : gameRatioList) {
+            logger.info(gameRatio.toString());
+        }
+        logger.info("============ 钜富 end ============");
         return gameRatioList;
     }
 
-
+    //    波胆
     public List<GameRatio> getRatioListFromHga() throws Exception {
         List<String> pdPage = gambleRatioHgaCrawler.loginAndPDPage();
-        List<GameRatio> gambleRatioList = gambleRatioHgaCrawler.getGameRatioByParsingHtml(pdPage);
-//        for (GameRatio gameRatio : gambleRatioList) {
-//            System.out.println(gameRatio);
-//        }
-        return gambleRatioList;
+        List<GameRatio> gameRatioList = gambleRatioHgaCrawler.getGameRatioByParsingHtml(pdPage);
+        logger.info("============ 皇冠 ============");
+        for (GameRatio gameRatio : gameRatioList) {
+            logger.info(gameRatio.toString());
+        }
+        logger.info("============ 皇冠 end ============");
+        return gameRatioList;
     }
 
+    //    反波胆
     public List<GameRatio> getRatioListFromTaogin() throws Exception {
         List<String> pdPage = gambleRatioTaoginCrawler.loginAndPDPage();
-        List<GameRatio> gambleRatioList = gambleRatioTaoginCrawler.getGameRatioByParsingHtml(pdPage);
-//        for (GameRatio gameRatio : gambleRatioList) {
-//            System.out.println(gameRatio);
-//        }
-        return gambleRatioList;
+        List<GameRatio> gameRatioList = gambleRatioTaoginCrawler.getGameRatioByParsingHtml(pdPage);
+        logger.info("============ 淘金 ============");
+        for (GameRatio gameRatio : gameRatioList) {
+            logger.info(gameRatio.toString());
+        }
+        logger.info("============ 淘金 end ============");
+        return gameRatioList;
     }
 }
