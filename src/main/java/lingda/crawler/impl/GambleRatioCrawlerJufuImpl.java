@@ -75,10 +75,14 @@ public class GambleRatioCrawlerJufuImpl implements GambleRatioCrawler {
             try {
                 Thread.sleep(3000);
                 List<WebElement> accordionList = activeGamesAll.findElements(By.className("accordion_show"));
-                System.out.println(accordionList.size());
+                String lastHtml = null;
                 for (WebElement accordion : accordionList) {
                     accordion.click();
-                    htmlList.add(driver.getPageSource());
+                    String curHtml = driver.getPageSource();
+                    if (!curHtml.equals(lastHtml)) {
+                        htmlList.add(curHtml);
+                    }
+                    lastHtml = curHtml;
                 }
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
