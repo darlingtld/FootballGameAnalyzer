@@ -2,6 +2,7 @@ package lingda.crawler.impl;
 
 import lingda.crawler.GambleRatioCrawler;
 import lingda.model.GameRatio;
+import lingda.util.DriverUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -54,29 +55,21 @@ public class GambleRatioCrawlerTaoGinImpl implements GambleRatioCrawler {
         WebDriver driver = new ChromeDriver(new ChromeDriverService.Builder().withSilent(true).build());
         try {
             driver.get(website);
-            Thread.sleep(2000);  // Let the user actually see something!
-            WebElement form = driver.findElement(By.className("user_s"));
+            WebElement form = DriverUtils.returnOnFindingElement(driver, By.className("user_s"));
             form.findElement(By.name("account")).sendKeys(username);
             form.findElement(By.name("pwd")).sendKeys(password);
             driver.findElement(By.className("btn_login")).click();
-            Thread.sleep(5000);  // Let the user actually see something!
-//            String html = driver.getPageSource();
-//            System.out.println(html);
-            driver.switchTo().frame("leftmenu");
+            logger.info("user logged in");
+            driver = DriverUtils.returnOnFindingFrame(driver, "leftmenu");
             WebElement gameListMenu = driver.findElement(By.id("cssmenu"));
             List<WebElement> liList = gameListMenu.findElement(By.className("open")).findElements(By.tagName("li"));
             List<String> htmlList = new ArrayList<>();
-//            int count = 4;
             try {
                 for (WebElement li : liList) {
-//                    if (count-- < 0) {
-//                        break;
-//                    }
                     li.click();
-                    Thread.sleep(2500);
-                    driver.switchTo().parentFrame().switchTo().frame("rightmenu");
+                    driver = DriverUtils.returnOnFindingFrame(driver.switchTo().parentFrame(), "rightmenu");
+                    DriverUtils.returnOnFinishLoading(driver, "...loading...</font><img src=\"../Images/28.gif\" />");
                     String bdHtml = driver.getPageSource();
-//                    System.out.println(bdHtml);
                     htmlList.add(bdHtml);
                     driver.switchTo().parentFrame().switchTo().frame("leftmenu");
                 }

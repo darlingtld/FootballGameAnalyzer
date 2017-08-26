@@ -8,10 +8,9 @@ import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-
 public class DriverUtils {
     private static final Logger logger = LoggerFactory.getLogger(DriverUtils.class);
+    private static final Integer POLLING_INTERVAL_MS = 100;
 
     public static WebElement returnOnFindingElement(WebDriver driver, By selector) {
         while (true) {
@@ -22,7 +21,7 @@ public class DriverUtils {
                 return element;
             } catch (NoSuchElementException e) {
                 try {
-                    Thread.sleep(100);
+                    Thread.sleep(POLLING_INTERVAL_MS);
                 } catch (InterruptedException e1) {
                     e1.printStackTrace();
                 }
@@ -39,10 +38,22 @@ public class DriverUtils {
                 return webDriver;
             } catch (NoSuchFrameException e) {
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(POLLING_INTERVAL_MS);
                 } catch (InterruptedException e1) {
                     e1.printStackTrace();
                 }
+            }
+        }
+    }
+
+    public static void returnOnFinishLoading(WebDriver driver, String loadingIndicator) {
+        while (driver.getPageSource().contains(loadingIndicator)) {
+            logger.info("waiting for page finish loading indicator={}", loadingIndicator);
+            logger.info(driver.getPageSource());
+            try {
+                Thread.sleep(POLLING_INTERVAL_MS);
+            } catch (InterruptedException e1) {
+                e1.printStackTrace();
             }
         }
     }
