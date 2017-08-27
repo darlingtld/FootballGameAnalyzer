@@ -79,9 +79,9 @@ public class GambleRatioCrawlerHgaImpl implements GambleRatioCrawler {
         List<GameRatio> gameRatioList = new ArrayList<>();
         for (String html : htmlList) {
 //        make sure it is 波胆
-            if (!html.contains("波胆：全场")) {
-                throw new RuntimeException("this page is not for 波胆：全场");
-            }
+//            if (!html.contains("波胆：全场")) {
+//                throw new RuntimeException("this page is not for 波胆：全场");
+//            }
             Document doc = Jsoup.parse(html);
             Element showtable = doc.getElementById("showtable");
             Element titleTR = showtable.getElementById("title_tr");
