@@ -49,7 +49,16 @@ public class GameRatioAnalyzer {
             for (Map.Entry<String, Double> fanbodanHomeTeamRatioEntry : fanbodanGameRatio.getHomeTeamRatioMap().entrySet()) {
                 String condition = fanbodanHomeTeamRatioEntry.getKey();
                 Double fanbodanPercent = fanbodanHomeTeamRatioEntry.getValue();
-                Double bodanRatio = bodanGameRatio.getHomeTeamRatioMap().getOrDefault(condition, bodanGameRatio.getHomeTeamRatioMap().get("其他比分"));
+                Double bodanRatio;
+                if (bodanGameRatio.getHomeTeamRatioMap().containsKey(condition)) {
+                    bodanRatio = bodanGameRatio.getHomeTeamRatioMap().get(condition);
+                } else if (bodanGameRatio.getHomeTeamRatioMap().containsKey("其他比分")) {
+                    bodanRatio = bodanGameRatio.getHomeTeamRatioMap().get("其他比分");
+                } else if (bodanGameRatio.getHomeTeamRatioMap().containsKey("其它")) {
+                    bodanRatio = bodanGameRatio.getHomeTeamRatioMap().get("其它");
+                } else {
+                    bodanRatio = 0.0;
+                }
                 logger.info("[{}] [fanbodan]:{}% [bodan]: {}", condition, fanbodanPercent, bodanRatio);
                 LuckyRatio luckyRatio;
                 Double ratioScore = getRatioScore(fanbodanPercent, bodanRatio);

@@ -28,7 +28,7 @@ public class GameRatioResultContainer {
     private GameRatioService gameRatioService;
 
     private final static long SECOND = 1000;
-//    private List<Bingo> bingoList = null;
+
 
     private Map<String, List<Bingo>> map = new HashMap<>();
 
@@ -36,13 +36,6 @@ public class GameRatioResultContainer {
         return map;
     }
 
-//    public List<Bingo> getBingoList() {
-//        if (this.bingoList == null) {
-//            return Collections.emptyList();
-//        } else {
-//            return this.bingoList;
-//        }
-//    }
 
     //    分析波胆vs反波胆
     @Scheduled(fixedRate = SECOND * 30)
@@ -83,5 +76,52 @@ public class GameRatioResultContainer {
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
+    }
+
+    @Scheduled(fixedRate = SECOND * 30)
+    public void analyzeLijiAndJufu() {
+        logger.info("start a job to fetch ratio and analyze at {}", LocalDateTime.now());
+        try {
+            List<GameRatio> lijiGameRatioList = gameRatioService.getRatioListFromLiji();
+            if (lijiGameRatioList == null || lijiGameRatioList.isEmpty()) {
+                return;
+            }
+            List<GameRatio> jufuGameRatioList = gameRatioService.getRatioListFromJufu();
+            if (jufuGameRatioList == null || jufuGameRatioList.isEmpty()) {
+                return;
+            }
+            List<Bingo> bingoList = gameRatioAnalyzer.analyze(jufuGameRatioList, lijiGameRatioList);
+            map.put("利记vs钜富", bingoList);
+            logger.info("job finished at {}", LocalDateTime.now());
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+    }
+
+    //    分析波胆vs反波胆
+    @Scheduled(fixedRate = SECOND * 30)
+    public void analyzeLijiAndTaogin() {
+        logger.info("start a job to fetch ratio and analyze at {}", LocalDateTime.now());
+        try {
+            List<GameRatio> lijiGameRatioList = gameRatioService.getRatioListFromLiji();
+            if (lijiGameRatioList == null || lijiGameRatioList.isEmpty()) {
+                return;
+            }
+            List<GameRatio> taoginGameRatioList = gameRatioService.getRatioListFromTaogin();
+            if (taoginGameRatioList == null || taoginGameRatioList.isEmpty()) {
+                return;
+            }
+            List<Bingo> bingoList = gameRatioAnalyzer.analyze(taoginGameRatioList, lijiGameRatioList);
+            map.put("利记vs淘金", bingoList);
+            logger.info("job finished at {}", LocalDateTime.now());
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+    }
+
+    @Scheduled(fixedRate = SECOND * 30)
+    public void clearCache(){
+        logger.info("clear cache");
+        gameRatioService.clearCache();
     }
 }
