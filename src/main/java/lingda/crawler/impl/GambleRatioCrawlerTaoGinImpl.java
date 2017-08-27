@@ -41,6 +41,9 @@ public class GambleRatioCrawlerTaoGinImpl implements GambleRatioCrawler {
     @Value("${gamble.website.taogin.password}")
     private String password;
 
+    @Value("${gamble.max_game_size}")
+    private int maxGameSize;
+
     private static final String HOMETEAM_REGEX = "(.*?)\\(主\\)";
     private static final Pattern HOMETEAM_PATTERN = Pattern.compile(HOMETEAM_REGEX);
     private static final String AWAYTEAM_REGEX = "v\\s+(.*?)\\s+";
@@ -71,8 +74,8 @@ public class GambleRatioCrawlerTaoGinImpl implements GambleRatioCrawler {
                     DriverUtils.returnOnFinishLoading(driver, "...loading...</font><img src=\"../Images/28.gif\" />");
                     String bdHtml = driver.getPageSource();
                     htmlList.add(bdHtml);
-                    if (htmlList.size() > 25) {
-                        logger.info("game list from taogin is greater than 25!!!  No need to continue crawling!!!");
+                    if (htmlList.size() > maxGameSize) {
+                        logger.info("game list from taogin is greater than {}!!!  No need to continue crawling!!!", maxGameSize);
                         break;
                     }
                     driver.switchTo().parentFrame().switchTo().frame("leftmenu");

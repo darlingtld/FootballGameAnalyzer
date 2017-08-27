@@ -43,6 +43,9 @@ public class GambleRatioCrawlerJufuImpl implements GambleRatioCrawler {
     @Value("${gamble.website.jufu.password}")
     private String password;
 
+    @Value("${gamble.max_game_size}")
+    private int maxGameSize;
+
     private static final String HOMETEAM_REGEX = "(.*?)\\(主\\)";
     private static final Pattern HOMETEAM_PATTERN = Pattern.compile(HOMETEAM_REGEX);
     private static final String AWAYTEAM_REGEX = "v(.*?)\\|";
@@ -79,7 +82,7 @@ public class GambleRatioCrawlerJufuImpl implements GambleRatioCrawler {
                     accordionList.get(i).click();
                     Thread.sleep(100);
                     htmlList.add(driver.getPageSource());
-                    if (htmlList.size() > 25) {
+                    if (htmlList.size() > maxGameSize) {
                         break;
                     }
                 }
