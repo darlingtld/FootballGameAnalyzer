@@ -83,24 +83,26 @@ public class GambleRatioCrawlerLijiImpl implements GambleRatioCrawler {
                 Element data = dataEles.get(i);
 //                get the league name
                 String league = meta.getElementsByClass("SubHeadT").text();
-                GameRatio gameRatio = new GameRatio();
-                Map<String, Double> homeTeamRatioMap = new LinkedHashMap<>();
-                Map<String, Double> awayTeamRatioMap = new LinkedHashMap<>();
-                gameRatio.setLeague(league);
+                for (int j = 0; j < data.getElementsByTag("thead").size(); j++) {
+                    GameRatio gameRatio = new GameRatio();
+                    Map<String, Double> homeTeamRatioMap = new LinkedHashMap<>();
+                    Map<String, Double> awayTeamRatioMap = new LinkedHashMap<>();
+                    gameRatio.setLeague(league);
 //                get the game time
-                String gameTime = data.getElementsByTag("thead").get(0).getElementsByClass("DateTimeTxt").text();
-                gameRatio.setGameTime(gameTime);
-                String bothTeam = data.getElementsByTag("thead").get(0).getElementsByClass("EventName").text();
+                    String gameTime = data.getElementsByTag("thead").get(j).getElementsByClass("DateTimeTxt").text();
+                    gameRatio.setGameTime(gameTime);
+                    String bothTeam = data.getElementsByTag("thead").get(j).getElementsByClass("EventName").text();
 //                get the home team ratio
-                String homeTeamName = bothTeam.split("\\s+")[0];
-                String awayTeamName = bothTeam.split("\\s+")[2];
-                gameRatio.setHomeTeam(homeTeamName);
-                gameRatio.setAwayTeam(awayTeamName);
-                Element ratioData = data.getElementsByTag("tbody").get(1);
-                parseRatioData(ratioData, gameRatio, homeTeamRatioMap);
+                    String homeTeamName = bothTeam.split("\\s+")[0];
+                    String awayTeamName = bothTeam.split("\\s+")[2];
+                    gameRatio.setHomeTeam(homeTeamName);
+                    gameRatio.setAwayTeam(awayTeamName);
+                    Element ratioData = data.getElementsByTag("tbody").get(j + 1);
+                    parseRatioData(ratioData, gameRatio, homeTeamRatioMap);
 
-                processAwayTeamRatioData(gameRatio, homeTeamRatioMap, awayTeamRatioMap);
-                gameRatioList.add(gameRatio);
+                    processAwayTeamRatioData(gameRatio, homeTeamRatioMap, awayTeamRatioMap);
+                    gameRatioList.add(gameRatio);
+                }
             }
         }
         return gameRatioList;
